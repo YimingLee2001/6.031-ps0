@@ -36,7 +36,16 @@ public class TurtleSoup {
      * @return angle in degrees, where 0 <= angle < 360
      */
     public static double calculateRegularPolygonAngle(int sides) {
-        throw new RuntimeException("implement me!");
+        // throw new RuntimeException("implement me!");
+
+        if (sides <= 2) {
+            throw new IllegalArgumentException("sides must be greater than 2");
+        }
+
+        double sum_outer_angle = 360 + 180 * sides;
+        double angle = 360 - sum_outer_angle / sides;
+
+        return angle;
     }
 
     /**
@@ -50,7 +59,16 @@ public class TurtleSoup {
      * @return the integer number of sides
      */
     public static int calculatePolygonSidesFromAngle(double angle) {
-        throw new RuntimeException("implement me!");
+        // throw new RuntimeException("implement me!");
+
+        if (angle > 360) {
+            throw new IllegalArgumentException("angle must be smaller than 360");
+        }
+
+        double outer_angle = 180 - angle;
+        double sides = 360 / outer_angle;
+
+        return (int) Math.round(sides);
     }
 
     /**
@@ -63,7 +81,14 @@ public class TurtleSoup {
      * @param sideLength length of each side
      */
     public static void drawRegularPolygon(Turtle turtle, int sides, int sideLength) {
-        throw new RuntimeException("implement me!");
+        // throw new RuntimeException("implement me!");
+
+        turtle.color(PenColor.GREEN);
+        double angle = 180 - calculateRegularPolygonAngle(sides);
+        for (int i = 0; i < sides; i++) {
+            turtle.forward(sideLength);
+            turtle.turn(angle);
+        }
     }
 
     /**
@@ -87,7 +112,18 @@ public class TurtleSoup {
      */
     public static double calculateHeadingToPoint(double currentHeading, int currentX, int currentY,
                                                  int targetX, int targetY) {
-        throw new RuntimeException("implement me!");
+        // throw new RuntimeException("implement me!");
+
+        int delta_x = targetX - currentX;
+        int delta_y = targetY - currentY;
+        double radian = Math.atan2(delta_x, delta_y);
+        double degree = Math.toDegrees(radian);
+        double delta_degree = degree - currentHeading;
+        if (delta_degree < 0) {
+            delta_degree += 360;
+        }
+
+        return delta_degree;
     }
 
     /**
@@ -105,7 +141,22 @@ public class TurtleSoup {
      *         otherwise of size (# of points) - 1
      */
     public static List<Double> calculateHeadings(List<Integer> xCoords, List<Integer> yCoords) {
-        throw new RuntimeException("implement me!");
+        // throw new RuntimeException("implement me!");
+
+        if (xCoords.size() != yCoords.size()) {
+            throw new IllegalArgumentException("xCoords.size() != yCoords.size()");
+        }
+
+        List<Double> headings = new ArrayList<>();
+        double currentHeading = 0;
+        for (int i = 0; i < xCoords.size() - 1; i++) {
+            if (!headings.isEmpty()) {
+                currentHeading = headings.get(headings.size() - 1);
+            }
+            headings.add(calculateHeadingToPoint(currentHeading, xCoords.get(i), yCoords.get(i), xCoords.get(i+1), yCoords.get(i+1)));
+        }
+
+        return headings;
     }
 
     /**
@@ -130,7 +181,8 @@ public class TurtleSoup {
     public static void main(String args[]) {
         DrawableTurtle turtle = new DrawableTurtle();
 
-        drawSquare(turtle, 40);
+        // drawSquare(turtle, 40);
+        drawRegularPolygon(turtle, 7, 50);
 
         // draw the window
         turtle.draw();
